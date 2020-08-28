@@ -51,32 +51,50 @@ The initial data kaggle data looks like the following:
   <img width="1250" height="525" src="./images/df_ahead.png">
 </p>
 
-I dumped the scraped data into a csv and it turned out pretty well, except for the missing players. After the EDA and merging the dataframes on player names and individual years, I went about creating a model.    
+I dumped the scraped data into a csv and it turned out pretty well, except for the missing players. After the EDA and merging the dataframes on player names and individual years, I went about creating a model. The idea behind the project is similar to forecasting, but instead of trying to predict one long trend, the model would need to analyze trends in many different shorter time lines, and have a classification algorithm as the final output. I decided to go with unsupervised clustering to analyze the trends.  Specifically, soft clustering, because with a category like 'forwards', there are several different types of forwards. There are strikers, wingers, attacking midfielders, some play with a striking partner, and some are up top alone.  So hard clustering does not feel appropriate.  
 
-So you are more likely to be booked on the road. This got me a bit more interested and so I started to dig into the data more.  What do the scatter plots look like when you plot the home cards against the away cards?  I added in a diagonal line to show where we would expect the numbers to be if the distribution was truly random.
-
+I started with KMeans.  I wanted to try to get an idea of how many centroids to look for so I plotted the silhouette scores for my dataset:
 <p align="center">
-  <img width="1000" height="450" src="./images/Home_and_Away_Yellows_Brandished_per_Referee_(Season_2000-2020).png">
+  <img width="900" height="600" src="./images/silhouette_score_correct.jpg">
 </p>
 
+This did not give me an indication of the correct number of cluster to use in my algorithm, so I decided to switch algorithms and try using sklearn's Non-negative matrix factorization (NMF). In NMF there is a similar plot to the silhouette score called the NMF reconstruction error.  Plotting the reconstruction error yielded me with the following results:
 <p align="center">
-  <img width="1000" height="450" src="./images/Home_and_Away_Reds_Brandished_per_Referee_(Season_2000-2020).png">
+  <img width="900" height="600" src="./images/NMF_Reconstruction_Error.png">
 </p>
 
-When I first looked at the Red Card scatter plot, I was surprised to see that most of the referees were on the 'home' side of the diagonal line.  The number of away reds are a greater propotion of the total red cards than the away yellows.  How could this be?  After a second glance, I noticed that the y-axis is twice what the x-axis values are.  This makes more sense.  In a one-to-one scatter plot, the dots representing each referee would be higher, but the graph overall would be more stretched out.  
+The idea behind the reconstruction plot is similar to a silhouette score, except you want to find the 'knee' of the graph. This is the area where the error stops gradually descending and starts to slope toward zero more sharply. The plot from my results does the opposite.  I starts with a sharper error decline and levels out to a more gradual decline around the k=3 point.  Given this, I decided to use k=3 to begin looking into the latent topics NMF would find.
 
-There is one more visualization that I think makes this point clearly. The mean number of games reffed by a Premier League referee is about 120.  That's a little more than 3 seasons of games.  To get this number of games, the Professional Game Match Officials Limited (PGMOL), the group that oversees EPL officials, must hold you in high esteem.  Only 24 referees have done it.  These refs have to be the best at being impartial and calling matches according to the current rules.  The following graphs show the number of home and away cards shown by these top officials.irkaal/english-premier-league-results
-In order to see if the difference card count was significant, I decided to run a z-test.  I could calculate the sample mean and standard deviation and had a sufficient number of samples, so I imported weightstats from statsmodels.stats for a 2-variable z-test. I ran the yellow cards first.  hnorm_yell.pdf(x) is the normal distribution for home yellow cards over the interval [-2,5], and anrom_yell.pdf(x) is the normal distribution for away yellows over that same interval. Degrees of freedom is one minus the number of matches in the sample, since each match is independent and random.  The p-value for this test was 0.997, which is much greater than my alpha of 0.25.  
+My data created an inbalanced dataset where about only ~16% of the datapoints would be categorized as a 'Yes' target. The target was created as a binary 1/0 where 0 = 'no' and 1 = 'yes'. To compensate for this I used stratification of my y-values in the train-test-split. The X_train set and the X_test set run through the NMF algorithm with k=3 to yield 3 latent topics. After consulting with our instructional team, I decided the latent topics that NMF discovered would be appended to the X_train and X_test sets as an addition feature. This left me with datasets of 53 features.
+
+Worried about the amount of features in the data, I decided to use a random forest classifier to try to predict my classifications. To get a good starting point for hyperparameter inputs, I decided to run a Randomized Search CV.  This yielded me with the following best parameters:  
+
+    {'bootstrap': False,
+    'ccp_alpha': 0.0,
+    'class_weight': None,
+    'criterion': 'gini',
+    'max_depth': 20,
+    'max_features': 'sqrt',
+    'max_leaf_nodes': None,
+    'max_samples': None,
+    'min_impurity_decrease': 0.0,
+    'min_impurity_split': None,
+    'min_samples_leaf': 1,
+    'min_samples_split': 2,
+    'min_weight_fraction_leaf': 0.0,
+    'n_estimators': 400,
+    'n_jobs': None,
+    'oob_score': False,
+    'random_state': None,
+    'verbose': 0,
+    'warm_start': False}
     
-    statmodel.ztest(hnorm_yell.pdf(x),anorm_yell.pdf(x),ddof=7569)
-    (0.0033134485216764734, 0.9973562554191262)
+Not 100% convinced by the Randomized Search CV results, I decided to run 2 sklearn RandomForestClassifiers in parallel to get more than one opinion and to judge the best model to create. One random forest was run using the Randomized Search CV hyperparameters, tuning the threshold for the predict_proba to try to determine the best outcome, and the second random forest ran with less trees and entropy as the the criterion.  The predict_proba threshold of the second forest was kept inline with the first forest through all the tests.
 
-Next, to the red cards. hnorm_red.pdf(x) is the normal distribution for home red cards over the interval [-1,1.5], with anorm_red.pdf(x) the normal distribution for away red cards over that same interval. The p-value for this test was 0.999, also much greater than my alpha of 0.25.
-{:toc}
+
     statmodel.ztest(hnorm_red.pdf(x),anorm_red.pdf(x),ddof=7569)
     (4.0847710039192654e-11, 0.9999999999674083)
 
-In both cases, I cannot reject the null hypothesis.  In fact, the referees should be commended for their impartiatility.  I have two more visualizations to reinforce the result of the z-test.
 
 <p align="center">
   <img width="800" height="400" src="./images/Home_yellow_normdist.jpeg">

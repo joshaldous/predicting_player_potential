@@ -123,37 +123,36 @@ fw32_targ_lst = ['Urby Emanuelson','Samuel Eto\'o','Jason Euell','Ewerthon','San
                  'Francesco Totti','David Trezeguet','Arda Turan','Marama Vahirua','Mathieu Valbuena','Darius Vassell','Mark Viduka',
                  'Christian Vieri','Willian','Sylvain Wiltord']
 
-df_fw = df_all_positions.create_position_df('FW')    # create a forward specific postion dataframe
-df_fw.drop(['gk_reflex','gk_dive','gk_hands','gk_kick','gk_position','yell_cards','red_cards'],axis=1,inplace=True) # drop position specific columns
-df_fw32 = df_fw.create_overage_df(32)
-df_fw_playing = df_fw32.create_underage_df(32)
-df_fw32_full = df_fw32.add_targets(fw32_targ_lst)
-df_fw32_yes, df_fw32_no = df_fw32_full.yes_no_split()
-
-df_cb = df_all_positions.create_position_df('CB')  # create a database for centerbacks from the class
-df_cb.drop(['gk_reflex','gk_dive','gk_hands','gk_kick','gk_position','pens_scored','pens_att','pen_rating'],axis=1,inplace=True)  # drop position specific columns
-df_cb_retd = df_cb.create_overage_df(32)
-df_cb_yng = df_cb.create_underage_df(32)
-
-df_def = df_all_positions.create_position_df('DEF')  # create a database for all defensive positions
-df_def.drop(['gk_reflex','gk_dive','gk_hands','gk_kick','gk_position'],axis=1,inplace=True)
-df_cb_retd = df_def.create_overage_df(32)
-df_cb_yng = df_def.create_underage_df(32)
-
-df_mf = df_all_positions.create_position_df('MF') # create a database for all midfield postions
-df_mf.drop(['gk_reflex','gk_dive','gk_hands','gk_kick','gk_position'],axis=1,inplace=True)
-df_mf_retd = df_mf.create_overage_df(32)
-df_mf_yng = df_mf.create_underage_df(32)
-
-df_gk = df_all_positions.create_position_df('GK')  # create a database for goalkeepers 
-df_gk.drop(['pens_scored','pens_att','goals','assists','goals_p90','assts_p90','g+a_p90','g-pens_p90','g+a-pens_p90',
-            'attack_rate','defense_rate','crossing','finishing','head_acc','volleys','dribble','curve','freekick_acc',
-            'acceleration','sprint_speed','shot_power','long_shot','interceptions','pen_rating','marking'],axis=1,inplace=True)
-df_gk_retd = df_gk.create_overage_df(32)
-df_gk_yng = df_cb.create_underage_df(32)
-
-
 if __name__ == '__main__':
-    df_tot.to_csv('../data/scrp_data/total_df.csv')
-    df_fw32_full.to_csv('../data/cln_dfs/fw32.csv')
+    df_fw = df_all_positions.create_position_df('FW')    # create a forward specific postion dataframe
+    df_fw.drop(['gk_reflex','gk_dive','gk_hands','gk_kick','gk_position','yell_cards','red_cards'],axis=1,inplace=True) # drop position specific columns
+    df_fw32 = df_fw.create_overage_df(32)
+    df_fw_playing = df_fw32.create_underage_df(32)
+    df_fw32_full = df_fw32.add_targets(fw32_targ_lst)
+    df_fw32_yes, df_fw32_no = df_fw32_full.yes_no_split()
+
+    df_cb = df_all_positions.create_position_df('CB')  # create a database for centerbacks from the class
+    df_cb.drop(['gk_reflex','gk_dive','gk_hands','gk_kick','gk_position','pens_scored','pens_att','pen_rating'],axis=1,inplace=True)  # drop position specific columns
+    df_cb_retd = df_cb.create_overage_df(32)
+    df_cb_yng = df_cb.create_underage_df(32)
+
+    df_def = df_all_positions.create_position_df('DEF')  # create a database for all defensive positions
+    df_def.drop(['gk_reflex','gk_dive','gk_hands','gk_kick','gk_position'],axis=1,inplace=True)
+    df_cb_retd = df_def.create_overage_df(32)
+    df_cb_yng = df_def.create_underage_df(32)
+
+    df_mf = df_all_positions.create_position_df('MF') # create a database for all midfield postions
+    df_mf.drop(['gk_reflex','gk_dive','gk_hands','gk_kick','gk_position'],axis=1,inplace=True)
+    df_mf_retd = df_mf.create_overage_df(32)
+    df_mf_yng = df_mf.create_underage_df(32)
+
+    df_gk = df_all_positions.create_position_df('GK')  # create a database for goalkeepers 
+    df_gk.drop(['pens_scored','pens_att','goals','assists','goals_p90','assts_p90','g+a_p90','g-pens_p90','g+a-pens_p90',
+                'attack_rate','defense_rate','crossing','finishing','head_acc','volleys','dribble','curve','freekick_acc',
+                'acceleration','sprint_speed','shot_power','long_shot','interceptions','pen_rating','marking'],axis=1,inplace=True)
+    df_gk_retd = df_gk.create_overage_df(32)
+    df_gk_yng = df_cb.create_underage_df(32)
+    
+    df_tot.to_csv('../data/scrp_data/total_df.csv') # push to csv to save and import from another function
+    df_fw32_full.to_csv('../data/cln_dfs/fw32.csv') 
     

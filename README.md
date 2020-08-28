@@ -95,7 +95,7 @@ The worst model results came from the higher thresholds (0.7 as the threshold):
         F1 Score: 0.895
     Optimized_Random_Forest_400_trees_gini:
         Accuracy Score: 0.977
-        F1 Score: 0.984
+        F1 Score: 0.862
 
 The best model results came from the 0.35 as the threshold:
 
@@ -104,7 +104,7 @@ The best model results came from the 0.35 as the threshold:
         F1 Score: 0.977
     Optimized_Random_Forest_400_trees_gini:
         Accuracy Score: 0.977
-        F1 Score: 0.862
+        F1 Score: 0.984
 
 The features that were the 15 most important features for the model with the best F1 score were:
 

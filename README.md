@@ -91,19 +91,37 @@ Worried about the amount of features in the data, I decided to use a random fore
     
 Not 100% convinced by the Randomized Search CV results, I decided to run 2 sklearn RandomForestClassifiers in parallel to get more than one opinion and to judge the best model to create. One random forest was run using the Randomized Search CV hyperparameters, tuning the threshold for the predict_proba to try to determine the best outcome, and the second random forest ran with less trees and entropy as the the criterion.  The predict_proba threshold of the second forest was kept inline with the first forest through all the tests.
 
+The worst model results came from the higher thresholds (0.7 as the threshold):
 
-    statmodel.ztest(hnorm_red.pdf(x),anorm_red.pdf(x),ddof=7569)
-    (4.0847710039192654e-11, 0.9999999999674083)
+    Random_Forest_250_trees_entropy:
+        Accuracy Score: 0.967
+        F1 Score: 0.895
+    Optimized_Random_Forest_400_trees_gini:
+        Accuracy Score: 0.977
+        F1 Score: 0.862
 
+The best model results came from the 0.35 as the threshold:
+
+    Random_Forest_250_trees_entropy:
+        Accuracy Score: 0.992
+        F1 Score: 0.977
+    Optimized_Random_Forest_400_trees_gini:
+        Accuracy Score: 0.977
+        F1 Score: 0.862
+
+The features that were the 15 most important features for the model with the best F1 score were:
 
 <p align="center">
-  <img width="800" height="400" src="./images/Home_yellow_normdist.jpeg">
+  <img width="900" height="600" src="./images/opt_400_gini_nboot_20_sqrt_035.jpg">
 </p>
 
-<p align="center">
-  <img width="800" height="400" src="./images/Home_red_normdist.jpeg">
-</p>
+I Also ran the model with 'fake' results where the prediction were all zeros to make sure that the model was not just predicting zero for all the targets and the scores were high because of that fact. This was disproven as shown by the drop in accuracy scores for both forests:
 
+    Random_Forest_250_trees_entropy:
+        Accuracy Score: 0.836
+    Optimized_Random_Forest_400_trees_gini:
+        Accuracy Score: 0.836
+    
 <a name="#markdown-header-Credits"></a>
 ## Credits
 

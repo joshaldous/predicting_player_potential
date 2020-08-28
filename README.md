@@ -28,11 +28,9 @@ The great thing about this Kaggle data is that it has multiple years for the pla
 
 Given all of the above, the question must be asked.  How can teams get ahead?  Is it possible to find a combination of statistics that would allow a team to get an insight into player potential? If it is possible, what are the metrics by which a team should judge a player?  
 
-My aim with this project is to 
-
 <a name="#markdown-header-EDA"></a>
 ## Exploratory Data Analysis
-I found a great resource on [Kaggle](https://www.kaggle.com/irkaal/english-premier-league-results) from a user named irkaal. This csv contains all the games from the beginning of the 2000-2001 season through to matches played this month. The major concern was that the referee's names were in several different forms. My solution to this was to create a referee dictionary with the last names of the referees as the keys and a string of first and last names as the values.  To do this, I separated the last names in the referee column and created a new column.  Next I created a list of referees based on those names in a text file.  Lastly, I combined the last names and list into a dictionary and created a new 'ref_name' column in my data frame that input the full standardized name of the ref from the dictionary.  {:toc}
+I found a great resource on [Kaggle](https://www.kaggle.com/) from a user named . This sqlite database contains over 10,000 player stats and attributes. The major concern was that the referee's names were in several different forms. My solution to this was to create a referee dictionary with the last names of the referees as the keys and a string of first and last names as the values.  To do this, I separated the last names in the referee column and created a new column.  Next I created a list of referees based on those names in a text file.  Lastly, I combined the last names and list into a dictionary and created a new 'ref_name' column in my data frame that input the full standardized name of the ref from the dictionary.  {:toc}
 Other than that, the data was solid.  There were about 25 rows of Nan values at the end that I lopped off, and I had to change the 'Date' column from a string to a datetime format, but minor switches.  The code I used to clean my data can be found [here](https://github.com/joshaldous/Galvinize-Capstone1/blob/master/src/EDACap1.py).
 <a name="#markdown-header-graphs"></a>
 ## Visualization
